@@ -15,7 +15,7 @@ Karberus.RandBgm = Karberus.RandBgm || {};
 /*:
  * @plugindesc Plays a different BGM randomly each battle.
  * @author Karberus
- * @version 1.0
+ * @version 1.1
  * 
  *
  *
