@@ -1,7 +1,7 @@
 //============================================================================
-// Karberus - Random Battle BGM 
+// Karberus - Random Battle BGM
 // RandomBattleBGM.js
-// Version 1.11
+// Version 1.2
 // No credit required. Can be used commercially or non commercially
 //============================================================================
 //============================================================================
@@ -13,10 +13,10 @@ Karberus.RandBgm = Karberus.RandBgm || {};
 //============================================================================
 //============================================================================
 /*:
- * @plugindesc v1.11Plays a different BGM randomly each battle.
+ * @plugindesc v1.2 Plays a different BGM randomly each battle.
  * @author Karberus
- * @version 1.11
- * 
+ * @version 1.2
+ *
  *
  *
  * @param Volume
@@ -52,166 +52,166 @@ Karberus.RandBgm = Karberus.RandBgm || {};
  *
  * @param BGM 4
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 5
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 6
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 7
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 8
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 9
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 10
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 11
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 12
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 13
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 14
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 15
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 16
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 17
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 18
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 19
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 20
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 21
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 22
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 23
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 24
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 25
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 26
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 27
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 28
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 29
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
  *
  * @param BGM 30
  * @desc Filname of the BGM that will be chosen at random for battle.
- * Default: 
- * @default 
+ * Default:
+ * @default
  *
- *@help Whenever battle starts, this plugin will randomly play one of the BGM's you 
+ *@help Whenever battle starts, this plugin will randomly play one of the BGM's you
  *choose.
  *
  * //==============================================================================
@@ -226,15 +226,15 @@ Karberus.RandBgm = Karberus.RandBgm || {};
  *
  * //Clears set battle bgm and goes back to playing bgm's randomly each battle
  *
- * ClearSetBattleBgm        
+ * ClearSetBattleBgm
  *
  * //==============================================================================
  */
 //===========================================================================
 //===========================================================================
- 
+
 (function() {
- 
+
 //Initialize parameter values
 Karberus.Parameters = PluginManager.parameters("RandomBattleBGM");
 //============================================================================
@@ -247,7 +247,7 @@ Karberus.RandBgm.BattleManager_startBattle = BattleManager.startBattle;
 var audio_bgm = {};
 var randBgm;
 var rbgm_name = {};
-var argument_name;
+var rbgm_argument_name;
 var bbgm_pitch = (Karberus.Parameters["Pitch"]);
 var bbgm_volume = (Karberus.Parameters["Volume"]);
 var bbgm_pan = (Karberus.Parameters["Pan"]);
@@ -289,23 +289,25 @@ randBgm_parameters[29] = String(Karberus.Parameters["BGM 30"]);
 //============================================================================
 //                       Plugin Commands
 //============================================================================
-var _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
+var Karb_Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
 
-    Game_Interpreter.prototype.pluginCommand = function(command, args) {
-        _Game_Interpreter_pluginCommand.call(this, command, args);
-         if (command === "SetBattleBgm") rbgm_name = {name: args, pitch: bbgm_pitch, volume: bbgm_volume, pan: bbgm_pan}; 
-		 if (command === "ClearSetBattleBgm") delete rbgm_name.name;
-         {
-			argument_name = args;
+    Game_Interpreter.prototype.pluginCommand = function(command, rbgm_args) {
+        Karb_Game_Interpreter_pluginCommand.call(this, command, rbgm_args);
+         if (command === "SetBattleBgm") {
+           rbgm_argument_name = rbgm_args;
+           rbgm_name = {name: rbgm_argument_name, pitch: bbgm_pitch, volume: bbgm_volume, pan: bbgm_pan};
          }
-    };
+		     if (command === "ClearSetBattleBgm") {
+           delete rbgm_name.name;
+         }
+};
 //============================================================================
 // Checks if a battle bgm has been set through a plugin command
-//============================================================================	
+//============================================================================
 var Karberus_CheckIfSetBattleBgm = function()	{
 	if (!rbgm_name.name) {
 	return audio_bgm;
-	} else if (rbgm_name.name = argument_name){
+} else if (rbgm_name.name = rbgm_argument_name){
 	return rbgm_name;
 	}
 };
