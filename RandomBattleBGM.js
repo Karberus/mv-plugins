@@ -1,7 +1,7 @@
 //============================================================================
 // Karberus - Random Battle BGM 
 // RandomBattleBGM.js
-// Version 1.1
+// Version 1.11
 // No credit required. Can be used commercially or non commercially
 //============================================================================
 //============================================================================
@@ -13,9 +13,9 @@ Karberus.RandBgm = Karberus.RandBgm || {};
 //============================================================================
 //============================================================================
 /*:
- * @plugindesc v1.1Plays a different BGM randomly each battle.
+ * @plugindesc v1.11Plays a different BGM randomly each battle.
  * @author Karberus
- * @version 1.1
+ * @version 1.11
  * 
  *
  *
@@ -325,12 +325,6 @@ for(i = 0; i < randBgm_parameters.length; i++) {
 //============================================================================
 BattleManager.startBattle = function() {
 	Karberus.RandBgm.BattleManager_startBattle.call(this);
-	
-    this._phase = 'start';
-    $gameSystem.onBattleStart();
-    $gameParty.onBattleStart();
-    $gameTroop.onBattleStart();
-    this.displayStartMessages();
 	randBgm = randBgm_array[Math.floor(Math.random() * randBgm_array.length)];
 	audio_bgm = {name: randBgm, pitch: bbgm_pitch, volume: bbgm_volume, pan: bbgm_pan};
     AudioManager.playBgm(Karberus_CheckIfSetBattleBgm());
