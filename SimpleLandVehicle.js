@@ -1,7 +1,7 @@
 //============================================================================
 // Karberus - Simple Land Vehicle
 // SimpleLandVehicle.js
-// Version 1.0
+// Version 1.1
 // No credit required. Can be used commercially or non commercially
 //============================================================================
 //============================================================================
@@ -13,9 +13,9 @@ Karberus.LandBoat = Karberus.LandBoat || {};
 //============================================================================
 //============================================================================
 /*:
- * @plugindesc v1.0 Allows you to drive/ride a vehicle on land.
+ * @plugindesc v1.1 Allows you to drive/ride a vehicle on land.
  * @author Karberus
- * @version 1.0
+ * @version 1.1
  *
  *
  *
@@ -29,11 +29,23 @@ Karberus.LandBoat = Karberus.LandBoat || {};
  * false = off / true = on
  * @default false
  *
+ *
+ * @param Touch Events
+ * @desc Whether touch events will be triggered while on land vehicle
+ * false = off / true = on
+ * @default false
+ *
+ *
+ * @param Action Button Events
+ * @desc Whether action button events will trigger while on land vehicle
+ * false = off / true = on
+ * @default false
+ *
+ *
  *@help Change the boat's graphic in the database to fit a land vehicle.
  *
  *This plugin changes how the boat functions, and makes it into a land vehicle.
  *
- *Note: While on the land vehicle Touch/Action Button Events won't be triggered.
  *
  */
 
@@ -44,6 +56,8 @@ Karberus.Parameters = PluginManager.parameters("SimpleLandVehicle");
 
 Karberus.LandBoat.Speed = Number(Karberus.Parameters["Vehicle Speed"]) ||  5;
 Karberus.LandBoat.Encounters = String(Karberus.Parameters["Encounters"]);
+Karberus.LandBoat.TouchEvents = String(Karberus.Parameters["Touch Events"]);
+Karberus.LandBoat.ActionEvents = String(Karberus.Parameters["Action Button Events"]);
 
 //=========================================================================
 // Passability / Overwrite
@@ -85,14 +99,53 @@ Game_Player.prototype.canEncounter = function() {
 };
 
 //=============================================================================
-// Unable to start events while on land vehicle
+// Check whether events can be triggered / Overwrite
 //=============================================================================
 
-Karberus.LandBoat.Game_Player_canStartLocalEvents = Game_Player.prototype.canStartLocalEvents;
-Game_Player.prototype.canStartLocalEvents = function() {
 
-    Karberus.LandBoat.Game_Player_canStartLocalEvents.call(this);
-    return !this.isInBoat();
+
+Game_Player.prototype.checkEventTriggerHere = function(triggers) {
+  if (eval(Karberus.LandBoat.TouchEvents) === false) {
+    if (!this.isInBoat() && this.canStartLocalEvents()) {
+        this.startMapEvent(this.x, this.y, triggers, false);
+    }
+  } else {  if (this.canStartLocalEvents()) {
+        this.startMapEvent(this.x, this.y, triggers, false);
+    }
+  }
+};
+
+Game_Player.prototype.checkEventTriggerThere = function(triggers) {
+  if (eval(Karberus.LandBoat.ActionEvents) === false) {
+    if (!this.isInBoat() && this.canStartLocalEvents()) {
+        var direction = this.direction();
+        var x1 = this.x;
+        var y1 = this.y;
+        var x2 = $gameMap.roundXWithDirection(x1, direction);
+        var y2 = $gameMap.roundYWithDirection(y1, direction);
+        this.startMapEvent(x2, y2, triggers, true);
+        if (!$gameMap.isAnyEventStarting() && $gameMap.isCounter(x2, y2)) {
+            var x3 = $gameMap.roundXWithDirection(x2, direction);
+            var y3 = $gameMap.roundYWithDirection(y2, direction);
+            this.startMapEvent(x3, y3, triggers, true);
+        }
+    }
+  } else {
+    if (this.canStartLocalEvents()) {
+        var direction = this.direction();
+        var x1 = this.x;
+        var y1 = this.y;
+        var x2 = $gameMap.roundXWithDirection(x1, direction);
+        var y2 = $gameMap.roundYWithDirection(y1, direction);
+        this.startMapEvent(x2, y2, triggers, true);
+        if (!$gameMap.isAnyEventStarting() && $gameMap.isCounter(x2, y2)) {
+            var x3 = $gameMap.roundXWithDirection(x2, direction);
+            var y3 = $gameMap.roundYWithDirection(y2, direction);
+            this.startMapEvent(x3, y3, triggers, true);
+        }
+    }
+
+  }
 };
 
 //=============================================================================
