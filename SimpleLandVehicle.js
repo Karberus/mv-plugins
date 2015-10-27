@@ -1,7 +1,7 @@
 //============================================================================
 // Karberus - Simple Land Vehicle
 // SimpleLandVehicle.js
-// Version 1.1
+// Version 1.2
 // No credit required. Can be used commercially or non commercially
 //============================================================================
 //============================================================================
@@ -13,9 +13,9 @@ Karberus.LandBoat = Karberus.LandBoat || {};
 //============================================================================
 //============================================================================
 /*:
- * @plugindesc v1.1 Allows you to drive/ride a vehicle on land.
+ * @plugindesc v1.2 Allows you to drive/ride a vehicle on land.
  * @author Karberus
- * @version 1.1
+ * @version 1.2
  *
  *
  *
@@ -42,6 +42,12 @@ Karberus.LandBoat = Karberus.LandBoat || {};
  * @default false
  *
  *
+ * @param Forbid Region ID
+ * @desc Set which Region ID forbids land vehicle to pass through.
+ *Set to 0 if you don't wish to use this feature.
+ * @default 0
+ *
+ *
  *@help Change the boat's graphic in the database to fit a land vehicle.
  *
  *This plugin changes how the boat functions, and makes it into a land vehicle.
@@ -58,6 +64,7 @@ Karberus.LandBoat.Speed = Number(Karberus.Parameters["Vehicle Speed"]) ||  5;
 Karberus.LandBoat.Encounters = String(Karberus.Parameters["Encounters"]);
 Karberus.LandBoat.TouchEvents = String(Karberus.Parameters["Touch Events"]);
 Karberus.LandBoat.ActionEvents = String(Karberus.Parameters["Action Button Events"]);
+Karberus.LandBoat.ForbidRegionID = Number(Karberus.Parameters["Forbid Region ID"]);
 
 //=========================================================================
 // Passability / Overwrite
@@ -67,12 +74,10 @@ Game_Player.prototype.isMapPassable = function(x, y, d) {
   var vehicle = this.vehicle();
     if (vehicle)
     {
-      if(this._vehicleType !== 'boat')
+      if(this._vehicleType !== 'boat') return vehicle.isMapPassable(x, y, d);
+      if(this._vehicleType === 'boat')
       {
-        return vehicle.isMapPassable(x, y, d);
-      }
-      else
-      {
+        if(this.noLandVehicleRegion(x, y, d)) return false;
         return Game_Character.prototype.isMapPassable.call(this, x, y, d);
       }
 
@@ -81,6 +86,54 @@ Game_Player.prototype.isMapPassable = function(x, y, d) {
     {
 return Game_Character.prototype.isMapPassable.call(this, x, y, d);
     }
+};
+
+//==========================================================================
+// Check
+//==========================================================================
+
+Game_Player.prototype.noLandVehicleRegion = function(x, y, d) {
+    var regionId = this.checkNoLandVehicleRegionID(x, y, d);
+    if (regionId === 0) return false;
+    if (regionId === Karberus.LandBoat.ForbidRegionID) return true;
+    return regionId === Karberus.LandBoat.ForbidRegionID;
+};
+
+//========================================================================
+// Get Region ID
+//========================================================================
+
+Game_Player.prototype.checkNoLandVehicleRegionID = function(x, y, d) {
+    switch (d) {
+    case 1:
+      return $gameMap.regionId(x - 1, y + 1);
+      break;
+    case 2:
+      return $gameMap.regionId(x + 0, y + 1);
+      break;
+    case 3:
+      return $gameMap.regionId(x + 1, y + 1);
+      break;
+    case 4:
+      return $gameMap.regionId(x - 1, y + 0);
+      break;
+    case 5:
+      return $gameMap.regionId(x + 0, y + 0);
+      break;
+    case 6:
+      return $gameMap.regionId(x + 1, y + 0);
+      break;
+    case 7:
+      return $gameMap.regionId(x - 1, y - 1);
+      break;
+    case 8:
+      return $gameMap.regionId(x + 0, y - 1);
+      break;
+    case 9:
+      return $gameMap.regionId(x + 1, y - 1);
+      break;
+    }
+    return 0;
 };
 
 //=============================================================================
@@ -168,3 +221,4 @@ Game_Vehicle.prototype.initMoveSpeed = function() {
 //=============================================================================
 //===================================END FILE==================================
 //=============================================================================
+
