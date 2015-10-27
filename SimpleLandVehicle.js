@@ -39,7 +39,7 @@ Karberus.LandBoat = Karberus.LandBoat || {};
 
 (function() {
 
-//Initialize paramter values
+//Initialize parameter values
 Karberus.Parameters = PluginManager.parameters("SimpleLandVehicle");
 
 Karberus.LandBoat.Speed = Number(Karberus.Parameters["Vehicle Speed"]) ||  5;
