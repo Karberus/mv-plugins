@@ -1,7 +1,7 @@
 //============================================================================
 // Karberus - Simple Follower Control
 // SimpleFollowerControl.js
-// Version 1.0
+// Version 1.01
 // No credit required. Can be used commercially or non commercially
 //============================================================================
 //============================================================================
@@ -10,10 +10,12 @@ Imported.SimpleFollowerOptions = true;
 
 var Karberus = Karberus || {};
 Karberus.FollowerOpt = Karberus.FollowerOpt || {};
+//============================================================================
+//============================================================================
 /*:
- * @plugindesc v1.0 Allows you simple control over your followers.
+ * @plugindesc v1.01 Allows you simple control over your followers.
  * @author Karberus
- * @version 1.0
+ * @version 1.01
  *
  *
  *
@@ -53,6 +55,7 @@ Karberus.FollowerOpt = Karberus.FollowerOpt || {};
  *
  *
  */
+ (function() {
 
 Karberus.Parameters = PluginManager.parameters("SimpleFollowerControl");
 
@@ -119,14 +122,60 @@ Game_Followers.prototype.turnRight90Follower = function() {
 Game_Followers.prototype.turnLeft90Follower = function() {
   this._data[Karberus.FollowerOpt.WhichFollower-1].turnLeft90();
 };
+Game_Followers.prototype.moveRandomFollower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].moveRandom();
+};
+Game_Followers.prototype.moveTowardPlayerFollower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].moveTowardPlayer();
+};
+Game_Followers.prototype.moveAwayFromPlayerFollower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].moveAwayFromPlayer();
+};
+Game_Followers.prototype.moveForwardFollower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].moveForward();
+};
+Game_Followers.prototype.moveBackwardFollower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].moveBackward();
+};
 Game_Followers.prototype.setThroughFollower = function(followerSwitch) {
   this._data[Karberus.FollowerOpt.WhichFollower-1].setThrough(followerSwitch);
 };
+Game_Followers.prototype.turn180Follower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].turn180();
+};
+Game_Followers.prototype.turnRightOrLeft90Follower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].turnRightOrLeft90();
+};
+Game_Followers.prototype.turnRandomFollower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].turnRandom();
+};
+Game_Followers.prototype.turnTowardPlayerFollower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].turnTowardPlayer();
+};
+Game_Followers.prototype.turnAwayFromPlayerFollower = function() {
+  this._data[Karberus.FollowerOpt.WhichFollower-1].turnAwayFromPlayer();
+};
 
-Game_Character.prototype.processMoveCommand = function(command) {
+_Karb_Game_Character_updateRoutineMove = Game_Character.prototype.updateRoutineMove;
+Game_Character.prototype.updateRoutineMove = function() {
+    if (this._waitCount > 0) {
+        this._waitCount--;
+    } else {
+        this.setMovementSuccess(true);
+        var command = this._moveRoute.list[this._moveRouteIndex];
+        if (command && Karberus.FollowerOpt.WhichFollower > 0) {
+            this.processMoveFollowerCommand(command);
+            this.advanceMoveRouteIndex();
+        }
+        else if (command) {
+            _Karb_Game_Character_updateRoutineMove.call(this);
+        }
+    }
+};
+
+Game_Character.prototype.processMoveFollowerCommand = function(command) {
     var gc = Game_Character;
     var params = command.parameters;
-    if (Karberus.FollowerOpt.WhichFollower > 0) {
     switch (command.code) {
     case gc.ROUTE_END:
         this.processRouteEnd();
@@ -164,19 +213,24 @@ Game_Character.prototype.processMoveCommand = function(command) {
         this._waitCount = 16;
         break;
     case gc.ROUTE_MOVE_RANDOM:
-        this.moveRandom();
+        this._followers.moveRandomFollower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_MOVE_TOWARD:
-        this.moveTowardPlayer();
+        this._followers.moveTowardPlayerFollower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_MOVE_AWAY:
-        this.moveAwayFromPlayer();
+        this._followers.moveAwayFromPlayerFollower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_MOVE_FORWARD:
-        this.moveForward();
+        this._followers.moveForwardFollower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_MOVE_BACKWARD:
-        this.moveBackward();
+        this._followers.moveBackwardFollower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_JUMP:
         this._followers.jumpFollower(params[0], params[1]);
@@ -210,19 +264,24 @@ Game_Character.prototype.processMoveCommand = function(command) {
         this._waitCount = 16;
         break;
     case gc.ROUTE_TURN_180D:
-        this.turn180();
+        this._followers.turn180Follower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_TURN_90D_R_L:
-        this.turnRightOrLeft90();
+        this._followers.turnRightOrLeft90Follower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_TURN_RANDOM:
-        this.turnRandom();
+        this._followers.turnRandomFollower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_TURN_TOWARD:
-        this.turnTowardPlayer();
+        this._followers.turnTowardPlayerFollower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_TURN_AWAY:
-        this.turnAwayFromPlayer();
+        this._followers.turnAwayFromPlayerFollower();
+        this._waitCount = 16;
         break;
     case gc.ROUTE_SWITCH_ON:
         $gameSwitches.setValue(params[0], true);
@@ -282,150 +341,9 @@ Game_Character.prototype.processMoveCommand = function(command) {
         eval(params[0]);
         break;
     }
-  }
-  else {
-    switch (command.code) {
-    case gc.ROUTE_END:
-        this.processRouteEnd();
-        break;
-    case gc.ROUTE_MOVE_DOWN:
-        this.moveStraight(2);
-        break;
-    case gc.ROUTE_MOVE_LEFT:
-        this.moveStraight(4);
-        break;
-    case gc.ROUTE_MOVE_RIGHT:
-        this.moveStraight(6);
-        break;
-    case gc.ROUTE_MOVE_UP:
-        this.moveStraight(8);
-        break;
-    case gc.ROUTE_MOVE_LOWER_L:
-        this.moveDiagonally(4, 2);
-        break;
-    case gc.ROUTE_MOVE_LOWER_R:
-        this.moveDiagonally(6, 2);
-        break;
-    case gc.ROUTE_MOVE_UPPER_L:
-        this.moveDiagonally(4, 8);
-        break;
-    case gc.ROUTE_MOVE_UPPER_R:
-        this.moveDiagonally(6, 8);
-        break;
-    case gc.ROUTE_MOVE_RANDOM:
-        this.moveRandom();
-        break;
-    case gc.ROUTE_MOVE_TOWARD:
-        this.moveTowardPlayer();
-        break;
-    case gc.ROUTE_MOVE_AWAY:
-        this.moveAwayFromPlayer();
-        break;
-    case gc.ROUTE_MOVE_FORWARD:
-        this.moveForward();
-        break;
-    case gc.ROUTE_MOVE_BACKWARD:
-        this.moveBackward();
-        break;
-    case gc.ROUTE_JUMP:
-        this.jump(params[0], params[1]);
-        break;
-    case gc.ROUTE_WAIT:
-        this._waitCount = params[0] - 1;
-        break;
-    case gc.ROUTE_TURN_DOWN:
-        this.setDirection(2);
-        break;
-    case gc.ROUTE_TURN_LEFT:
-        this.setDirection(4);
-        break;
-    case gc.ROUTE_TURN_RIGHT:
-        this.setDirection(6);
-        break;
-    case gc.ROUTE_TURN_UP:
-        this.setDirection(8);
-        break;
-    case gc.ROUTE_TURN_90D_R:
-        this.turnRight90();
-        break;
-    case gc.ROUTE_TURN_90D_L:
-        this.turnLeft90();
-        break;
-    case gc.ROUTE_TURN_180D:
-        this.turn180();
-        break;
-    case gc.ROUTE_TURN_90D_R_L:
-        this.turnRightOrLeft90();
-        break;
-    case gc.ROUTE_TURN_RANDOM:
-        this.turnRandom();
-        break;
-    case gc.ROUTE_TURN_TOWARD:
-        this.turnTowardPlayer();
-        break;
-    case gc.ROUTE_TURN_AWAY:
-        this.turnAwayFromPlayer();
-        break;
-    case gc.ROUTE_SWITCH_ON:
-        $gameSwitches.setValue(params[0], true);
-        break;
-    case gc.ROUTE_SWITCH_OFF:
-        $gameSwitches.setValue(params[0], false);
-        break;
-    case gc.ROUTE_CHANGE_SPEED:
-        this.setMoveSpeed(params[0]);
-        break;
-    case gc.ROUTE_CHANGE_FREQ:
-        this.setMoveFrequency(params[0]);
-        break;
-    case gc.ROUTE_WALK_ANIME_ON:
-        this.setWalkAnime(true);
-        break;
-    case gc.ROUTE_WALK_ANIME_OFF:
-        this.setWalkAnime(false);
-        break;
-    case gc.ROUTE_STEP_ANIME_ON:
-        this.setStepAnime(true);
-        break;
-    case gc.ROUTE_STEP_ANIME_OFF:
-        this.setStepAnime(false);
-        break;
-    case gc.ROUTE_DIR_FIX_ON:
-        this.setDirectionFix(true);
-        break;
-    case gc.ROUTE_DIR_FIX_OFF:
-        this.setDirectionFix(false);
-        break;
-    case gc.ROUTE_THROUGH_ON:
-        this.setThrough(true);
-        break;
-    case gc.ROUTE_THROUGH_OFF:
-        this.setThrough(false);
-        break;
-    case gc.ROUTE_TRANSPARENT_ON:
-        this.setTransparent(true);
-        break;
-    case gc.ROUTE_TRANSPARENT_OFF:
-        this.setTransparent(false);
-        break;
-    case gc.ROUTE_CHANGE_IMAGE:
-        this.setImage(params[0], params[1]);
-        break;
-    case gc.ROUTE_CHANGE_OPACITY:
-        this.setOpacity(params[0]);
-        break;
-    case gc.ROUTE_CHANGE_BLEND_MODE:
-        this.setBlendMode(params[0]);
-        break;
-    case gc.ROUTE_PLAY_SE:
-        AudioManager.playSe(params[0]);
-        break;
-    case gc.ROUTE_SCRIPT:
-        eval(params[0]);
-        break;
-    }
-  }
 };
+
+})();
 //============================================================================================
 //=======================================END FILE=============================================
 //============================================================================================
