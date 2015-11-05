@@ -1,7 +1,7 @@
 //============================================================================
 // Karberus - Simple Follower Control
 // SimpleFollowerControl.js
-// Version 1.01
+// Version 1.1
 // No credit required. Can be used commercially or non commercially
 //============================================================================
 //============================================================================
@@ -13,9 +13,9 @@ Karberus.FollowerOpt = Karberus.FollowerOpt || {};
 //============================================================================
 //============================================================================
 /*:
- * @plugindesc v1.01 Allows you simple control over your followers.
+ * @plugindesc v1.1 Allows you simple control over your followers.
  * @author Karberus
- * @version 1.01
+ * @version 1.1
  *
  *
  *
@@ -44,11 +44,15 @@ Karberus.FollowerOpt = Karberus.FollowerOpt || {};
  *
  * //Overrides Set Move Route to allow you some control over your followers.
  *
- * MoveFollower x   // Where X equals: 0 = Player, 1 = First Follower, and so on.
+ * MoveFollower x   //Where x equals: 0 = Player, 1 = First Follower, and so on.
  *
  * //Stops all follower movement, allowing you to move without them following you.
  *
  * StopFollowers true/false  //Example: StopFollowers true
+ *
+ * //Allows you to show balloon animation on your followers
+ *
+ * BalloonFollower x  //Where x equals: 0 = player, 1 = First Follower, and so on.
  *
  * //==============================================================================
  * //==============================================================================
@@ -62,7 +66,7 @@ Karberus.Parameters = PluginManager.parameters("SimpleFollowerControl");
 Karberus.FollowerOpt.WhichFollower = 0;
 Karberus.FollowerOpt.StopFollowers = false;
 Karberus.FollowerOpt.FollowerCollision = String(Karberus.Parameters["Follower Collision"]);
-
+Karberus.FollowerOpt.getIDforBalloon = 0;
 
 var Karb_Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
 
@@ -74,6 +78,26 @@ var Karb_Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginComma
          if (command === "StopFollowers") {
            Karberus.FollowerOpt.StopFollowers = String(args);
          }
+         if (command === "BalloonFollower") {
+           Karberus.FollowerOpt.getIDforBalloon = args[0];
+         }
+};
+
+_karb_Game_Interpreter_command213 = Game_Interpreter.prototype.command213;
+Game_Interpreter.prototype.command213 = function() {
+  if (Karberus.FollowerOpt.getIDforBalloon > 0) {
+    this._character = $gamePlayer._followers._data[Karberus.FollowerOpt.getIDforBalloon-1];
+    if (this._character) {
+        this._character.requestBalloon(this._params[1]);
+        if (this._params[2]) {
+            this.setWaitMode('balloon');
+       }
+    }
+  }
+  else {
+    _karb_Game_Interpreter_command213.call(this);
+  }
+    return true;
 };
 
 Game_Player.prototype.isCollided = function(x, y) {
