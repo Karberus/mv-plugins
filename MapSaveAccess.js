@@ -1,7 +1,7 @@
 //============================================================================
 // Karberus - Map Save Access
 // MapSaveAccess.js
-// Version 1.0
+// Version 1.01
 // No credit required. Can be used commercially or non commercially
 //============================================================================
 //============================================================================
@@ -13,9 +13,9 @@ Karberus.MapSaveAcc = Karberus.MapSaveAcc || {};
 //============================================================================
 //============================================================================
 /*:
- * @plugindesc v1.0 Allows you to set which maps will have Save Access disabled by default.
+ * @plugindesc v1.01 Allows you to set which maps will have Save Access disabled by default.
  * @author Karberus
- * @version 1.0
+ * @version 1.01
  *
  *
  *
@@ -47,23 +47,23 @@ Karberus.MapSaveAcc = Karberus.MapSaveAcc || {};
    }
 
 //==========================================================================================
-_Karb_Scene_Map_Start = Scene_Map.prototype.start;
-Scene_Map.prototype.start = function() {
+_Karb_Game_Map_setup = Game_Map.prototype.setup;
+Game_Map.prototype.setup = function(mapId)  {
 
-  _Karb_Scene_Map_Start.call(this);
+  _Karb_Game_Map_setup.call(this, mapId);
 
-for (i = 0; i < Karberus.MapSaveAcc.MapsDisabledSave.length; ++i) {
-   if ($gameMap._mapId === Karberus.MapSaveAcc.MapsDisabledSave[i])
+   if (Karberus.MapSaveAcc.MapsDisabledSave.indexOf($gameMap._mapId) > -1)
    {
      $gameSystem.disableSave();
+     console.log("disabledSave");
    }
    else
    {
      $gameSystem.enableSave();
+     console.log("Enable Save");
    }
-
-  }
  }
+
 //===========================================================================================
 }) ();
 //============================================================================================
