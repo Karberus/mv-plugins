@@ -77,7 +77,7 @@ _Karb_Game_Map_setup = Game_Map.prototype.setup;
 Game_Map.prototype.setup = function(mapId)  {
 
   _Karb_Game_Map_setup.call(this, mapId);
-console.log(Karberus.MapSaveAcc.MapsEnabledSave);
+
    if (Karberus.MapSaveAcc.MapsDisabledSave.indexOf($gameMap._mapId) > -1 &&
  Karberus.MapSaveAcc.MapsEnabledSave.indexOf($gameMap._mapId) < 0)
    {
