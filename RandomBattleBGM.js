@@ -214,7 +214,7 @@ Karberus.RandBgm = Karberus.RandBgm || {};
  *@help This plugin will randomly play one of the BGM's you choose in battle.
  *
  *If you are going to set the battle bgm through an event, I recommend turning
- *the pluging off using the plugin command, and then turn it back on whenever
+ *the plugin off using the plugin command, and then turn it back on whenever
  *you want the random bgm to take place again.
  *
  *This is not necessary, but keep in mind that if you change the battle bgm
