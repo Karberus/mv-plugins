@@ -1,7 +1,7 @@
 //============================================================================
 // Karberus - Random Battle BGM
 // RandomBattleBGM.js
-// Version 1.2
+// Version 2.0
 // No credit required. Can be used commercially or non commercially
 //============================================================================
 //============================================================================
@@ -13,9 +13,9 @@ Karberus.RandBgm = Karberus.RandBgm || {};
 //============================================================================
 //============================================================================
 /*:
- * @plugindesc v1.2 Plays a different BGM randomly each battle.
+ * @plugindesc v2.0 Plays a different BGM randomly each battle.
  * @author Karberus
- * @version 1.2
+ * @version 2.0
  *
  *
  *
@@ -211,22 +211,25 @@ Karberus.RandBgm = Karberus.RandBgm || {};
  * Default:
  * @default
  *
- *@help Whenever battle starts, this plugin will randomly play one of the BGM's you
- *choose.
+ *@help This plugin will randomly play one of the BGM's you choose in battle.
+ *
+ *If you are going to set the battle bgm through an event, I recommend turning
+ *the pluging off using the plugin command, and then turn it back on whenever
+ *you want the random bgm to take place again.
+ *
+ *This is not necessary, but keep in mind that if you change the battle bgm
+ *through an event, and then the player opens and closes the menu, a random
+ *battle bgm will take place over the one you previously set. This is because
+ *a random battle bgm is set every time the map scene loads.
  *
  * //==============================================================================
  * //                  Plugin Commands
  * //==============================================================================
  *
- * //Overrides random bgm and plays whatever you set as filename each battle
+ * //Turns this plugin on or off
  *
- * SetBattleBgm filename    //Example: SetBattleBgm Battle3
+ * RandomBGM on/off   //Example: RandomBGM off
  *
- * //==============================================================================
- *
- * //Clears set battle bgm and goes back to playing bgm's randomly each battle
- *
- * ClearSetBattleBgm
  *
  * //==============================================================================
  */
@@ -240,17 +243,17 @@ Karberus.Parameters = PluginManager.parameters("RandomBattleBGM");
 //============================================================================
 // Override
 //============================================================================
-Karberus.RandBgm.BattleManager_startBattle = BattleManager.startBattle;
+_Karb_Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
 //============================================================================
 //                      Initialize Variables
 //============================================================================
 var audio_bgm = {};
 var randBgm;
-var rbgm_name = {};
 var rbgm_argument_name;
 var bbgm_pitch = (Karberus.Parameters["Pitch"]);
 var bbgm_volume = (Karberus.Parameters["Volume"]);
 var bbgm_pan = (Karberus.Parameters["Pan"]);
+Karberus.RandBgm.OnOrOff = "on";
 
 //============================================================================
 //             Array that holds the parameter values
@@ -291,26 +294,33 @@ randBgm_parameters[29] = String(Karberus.Parameters["BGM 30"]);
 //============================================================================
 var Karb_Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
 
-    Game_Interpreter.prototype.pluginCommand = function(command, rbgm_args) {
-        Karb_Game_Interpreter_pluginCommand.call(this, command, rbgm_args);
-         if (command === "SetBattleBgm") {
-           rbgm_argument_name = rbgm_args;
-           rbgm_name = {name: rbgm_argument_name, pitch: bbgm_pitch, volume: bbgm_volume, pan: bbgm_pan};
-         }
-		     if (command === "ClearSetBattleBgm") {
-           delete rbgm_name.name;
+    Game_Interpreter.prototype.pluginCommand = function(command, args) {
+        Karb_Game_Interpreter_pluginCommand.call(this, command, args);
+         if (command === "RandomBGM") {
+           Karberus.RandBgm.OnOrOff = String(args);
+           if (String(args) === "on") {
+             randBgm = randBgm_array[Math.floor(Math.random() * randBgm_array.length)];
+           	 audio_bgm = {name: randBgm, pitch: bbgm_pitch, volume: bbgm_volume, pan: bbgm_pan};
+             $gameSystem.setBattleBgm(audio_bgm);
+           }
          }
 };
-//============================================================================
-// Checks if a battle bgm has been set through a plugin command
-//============================================================================
-var Karberus_CheckIfSetBattleBgm = function()	{
-	if (!rbgm_name.name) {
-	return audio_bgm;
-} else if (rbgm_name.name = rbgm_argument_name){
-	return rbgm_name;
-	}
+
+//=============================================================================
+//Whenever Map Scene is loaded, Battle Bgm changes
+//=============================================================================
+
+Scene_Map.prototype.onMapLoaded = function() {
+
+  _Karb_Scene_Map_onMapLoaded.call(this);
+
+if (Karberus.RandBgm.OnOrOff === "on") {
+  randBgm = randBgm_array[Math.floor(Math.random() * randBgm_array.length)];
+	audio_bgm = {name: randBgm, pitch: bbgm_pitch, volume: bbgm_volume, pan: bbgm_pan};
+  $gameSystem.setBattleBgm(audio_bgm);
+ }
 };
+
 //============================================================================
 // Array that holds any declared BGM's by the user in the parameter settings
 //============================================================================
@@ -323,20 +333,7 @@ for(i = 0; i < randBgm_parameters.length; i++) {
 		randBgm_array.splice(0, 0, randBgm_parameters[i])
 	}
 };
-//============================================================================
-//============================================================================
-BattleManager.startBattle = function() {
-	Karberus.RandBgm.BattleManager_startBattle.call(this);
-	randBgm = randBgm_array[Math.floor(Math.random() * randBgm_array.length)];
-	audio_bgm = {name: randBgm, pitch: bbgm_pitch, volume: bbgm_volume, pan: bbgm_pan};
-    AudioManager.playBgm(Karberus_CheckIfSetBattleBgm());
-    AudioManager.stopBgs();
-};
-//============================================================================
-//============================================================================
- BattleManager.playBattleBgm = function() {};
-//============================================================================
-//============================================================================
+
 })();
 //============================================================================================
 //=======================================END FILE=============================================
