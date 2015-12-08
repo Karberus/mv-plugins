@@ -55,12 +55,10 @@ Game_Map.prototype.setup = function(mapId)  {
    if (Karberus.MapSaveAcc.MapsDisabledSave.indexOf($gameMap._mapId) > -1)
    {
      $gameSystem.disableSave();
-     console.log("disabledSave");
    }
    else
    {
      $gameSystem.enableSave();
-     console.log("Enable Save");
    }
  }
 
